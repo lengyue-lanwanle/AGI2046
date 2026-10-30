@@ -1,0 +1,41 @@
+# Fly.io 方案（不想管 Linux 就用这个）：在**仓库根目录**执行 `fly launch --copy-config` 之后 `fly deploy`
+# （必须放在根目录：Fly 以 fly.toml 所在目录为构建上下文，放 deploy/ 里就找不到 Dockerfile 和 src/）
+#
+# 注意三件事：
+#   1. 这是**单实例**应用（存档在内存 + 文件），不能 scale count > 1，否则两台机器各有一半房间；
+#   2. 必须挂 volume 到 /data，否则每次部署存档清零；
+#   3. auto_stop 要关掉：机器睡了，房间和内存里的对局就没了。
+app = "agi2046"
+primary_region = "hkg"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  AGI2046_PORT = "5178"
+  AGI2046_DATA = "/data"
+  ASPNETCORE_ENVIRONMENT = "Production"
+
+[[mounts]]
+  source = "agi_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 5178
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = false
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "20s"
+    method = "GET"
+    path = "/api/health"
+
+[[vm]]
+  # 空载 ~120MB，256MB 太紧（联机 + 存档序列化会冲高），512MB 起步
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

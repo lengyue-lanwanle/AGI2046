@@ -1,0 +1,35 @@
+bin/
+obj/
+tools/bin/
+data/sessions/
+data/rooms/
+data/tunnel.json
+tools/e2e/out/
+tools/smoke/.aoe-sid
+tools/smoke/.battle-sid
+*.log
+*.tmp
+data/runs.jsonl
+tools/ui/*/
+tools/art/raw/
+tools/video/raw/
+tools/video/out/
+data/profile.json
+
+# 本地工具状态（不是项目产物）
+.workbuddy/
+.routercode/
+data/_test-archive/
+
+# 部署打包产物
+dist/
+
+# 宣传片工程（含 node_modules，不随源码仓库分发）
+promo-video/
+
+# 单机版 WebAssembly 静态构建产物（由构建脚本生成）
+dist-pages/
+.pages-build/
+
+# 临时脚本
+tools/_tmp_*

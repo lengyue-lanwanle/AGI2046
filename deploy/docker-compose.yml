@@ -1,0 +1,68 @@
+# 一台机器、一个域名、两个容器：Caddy 负责 HTTPS，app 只管游戏。
+# 用法：
+#   1) 把 DOMAIN 写进同目录的 .env（例如 DOMAIN=game.example.com）
+#   2) docker compose up -d --build
+# 没有域名也能跑：把 Caddyfile 的站点地址改成 ":80"，用 IP:80 访问（没有 HTTPS）。
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: agi2046:latest
+    restart: unless-stopped
+    environment:
+      AGI2046_PORT: 5178
+      AGI2046_DATA: /data
+    volumes:
+      - agi-data:/data
+    # 只在 compose 内部暴露，公网只认 Caddy 的 80/443
+    expose:
+      - "5178"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:5178/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    # .NET 服务端空载约 120MB；1C1G 能跑，2C2G 更稳（联机时峰值会上去）
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      # 大陆节点未备案时 80/443 会被拦：设 HTTP_PORT=8080 就能用 http://IP:8080 访问
+      - "${HTTP_PORT:-80}:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-:80}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+  # 没有公网 IP / 不想开端口时用 Cloudflare Tunnel（家里旧设备、NAS 都适用）：
+  #   1) Cloudflare Zero Trust 里建一条 tunnel，public hostname 指向 http://app:5178
+  #   2) TUNNEL_TOKEN=xxx docker compose --profile tunnel up -d app tunnel
+  # 这时 Caddy 不用起（TLS 在 Cloudflare 那边终止），存档照样落在 agi-data 卷里。
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    profiles: ["tunnel"]
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN:-}
+    depends_on:
+      - app
+    # 想临时给朋友看又不登录 Cloudflare，换成这行拿一个随机 trycloudflare 地址（重启就变）：
+    # command: tunnel --no-autoupdate --url http://app:5178
+
+volumes:
+  agi-data:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,24 @@
+# Render 免费层蓝图（演示用，不是存档服）
+#
+# 用法：仓库推到 GitHub（私有也行）→ Render 控制台 New → Blueprint → 选这个仓库
+#
+# 两个已知限制（见 docs/DEPLOY.md §2 的 F）：
+#   1. 免费实例 15 分钟没请求就睡，第一个访问的人要等约 1 分钟冷启动。
+#      游戏页面每 1.5 秒轮询一次，有人开着就不会睡。
+#   2. 免费层挂不了持久盘，文件系统是临时的 —— 重启/重新部署后 data/ 下的存档清零。
+#      所以这里把 AGI2046_DATA 指到 /tmp，明确表示「这是临时目录」。
+services:
+  - type: web
+    name: agi2046
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      # Render 只认 $PORT（默认 10000），本项目读的是 AGI2046_PORT，这里对齐
+      - key: AGI2046_PORT
+        value: "10000"
+      - key: AGI2046_DATA
+        value: /tmp/agi2046-data
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>零号协议 2046 · 0.9.0 验证报告</title>
+<style>
+  :root{
+    --bg:#080b12;--panel:#0e1420;--line:rgba(255,255,255,.08);
+    --txt:#e7eefc;--dim:#8494ab;--cyan:#64e3ff;--green:#3ddc97;
+    --gold:#ffd278;--red:#ff6b78;--violet:#b18cff;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+    radial-gradient(1200px 600px at 15% -10%,rgba(100,227,255,.10),transparent 60%),
+    radial-gradient(900px 500px at 90% 0%,rgba(177,140,255,.08),transparent 60%),
+    var(--bg);
+    color:var(--txt);font-family:"Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:14px;line-height:1.7;padding:40px 32px 64px}
+  .wrap{max-width:1120px;margin:0 auto}
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.34em;color:var(--cyan);text-transform:uppercase}
+  h1{font-size:34px;letter-spacing:-.02em;margin:10px 0 6px}
+  .sub{color:var(--dim);font-size:13px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 26px}
+  .chip{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);
+    border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:rgba(255,255,255,.02)}
+  .chip b{color:var(--txt)}
+  .grp{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+  .pnl{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .pnl b{display:block;font-size:26px;letter-spacing:-.02em}
+  .pnl span{font-size:11px;color:var(--dim)}
+  .pnl.ok b{color:var(--green)} .pnl.warn b{color:var(--gold)}
+  h2{font-size:19px;margin:34px 0 12px;padding-left:12px;border-left:3px solid var(--cyan)}
+  h3{font-size:14px;margin:22px 0 8px;color:var(--cyan);font-family:var(--mono);letter-spacing:.08em}
+  p{color:#c4d2e4}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0 6px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--dim);font-weight:500}
+  td.k{color:var(--txt)} td.v{font-family:var(--mono);font-size:11px;color:var(--dim)}
+  .pill{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:999px;border:1px solid}
+  .pill.ok{color:var(--green);border-color:rgba(61,220,151,.4);background:rgba(61,220,151,.08)}
+  .pill.miss{color:var(--red);border-color:rgba(255,107,120,.4);background:rgba(255,107,120,.08)}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .card h4{margin:0 0 6px;font-size:13px;display:flex;justify-content:space-between;align-items:baseline}
+  .card h4 span{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.14em}
+  .card p{margin:0;font-size:12px;color:#a9b8cb;line-height:1.75}
+  figure{margin:14px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#05080e}
+  figure img{width:100%;display:block}
+  figcaption{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;font-size:11px;color:var(--dim);border-top:1px solid var(--line)}
+  figcaption b{color:var(--txt);font-weight:600}
+  code{font-family:var(--mono);font-size:11.5px;color:var(--gold)}
+  .note{border-left:2px solid var(--gold);padding:8px 0 8px 14px;color:#c9d6e6;font-size:12.5px;margin:12px 0}
+  .note.risk{border-color:var(--red)}
+  footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--dim);font-size:11px;font-family:var(--mono)}
+  @media(max-width:900px){.grp,.cards{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">AGI PROTOCOL 2046 · VERIFICATION</div>
+  <h1>0.9.0 · 把长图填满</h1>
+  <div class="sub">17 层 × 5 道 · 每幕 95 节点 · 小型战斗 / 陷阱 / 遗骸 / 废弃服务器 / 消耗品 / 三片密钥</div>
+  <div class="chips">
+    <span class="chip">版本 <b>0.9.0</b></span>
+    <span class="chip">每幕 <b>95</b> 节点</span>
+    <span class="chip">三幕 <b>285</b></span>
+    <span class="chip">追踪 <b>42</b></span>
+    <span class="chip">报告时间 <b>2026-10-23 21:55</b></span>
+  </div>
+
+  <div class="grp">
+    <div class="pnl ok"><b>0 / 0</b><span>构建警告与错误</span></div>
+    <div class="pnl ok"><b>4 / 4</b><span>1–4 人自动通关</span></div>
+    <div class="pnl ok"><b>30 / 30</b><span>系统级检查</span></div>
+    <div class="pnl ok"><b>497s</b><span>浏览器三幕通关</span></div>
+  </div>
+
+  <h2>01 · 地图构成（实测）</h2>
+  <table>
+    <tr><th>节点</th><th>数量 / 幕</th><th>占比</th><th>行为</th></tr>
+    <tr><td class="k">空地</td><td class="v">12</td><td class="v">12.6%</td><td>一句城市旁白，无机制</td></tr>
+    <tr><td class="k">小型战斗</td><td class="v">22</td><td class="v">23.2%</td><td>1–2 敌人、70% 血量、1–2 回合</td></tr>
+    <tr><td class="k">常规战斗</td><td class="v">7</td><td class="v">7.4%</td><td>3 敌人标准战斗</td></tr>
+    <tr><td class="k">事件</td><td class="v">9</td><td class="v">9.5%</td><td>单格收益降到 0.6，装备率 15%</td></tr>
+    <tr><td class="k">废弃服务器</td><td class="v">9</td><td class="v">9.5%</td><td>单人单项，位置固定，开局可见</td></tr>
+    <tr><td class="k">遗骸</td><td class="v">8</td><td class="v">8.4%</td><td>20–35 币 + 60% 道具</td></tr>
+    <tr><td class="k">陷阱</td><td class="v">8</td><td class="v">8.4%</td><td>进入即触发，掉 8–14% HP，永不致死</td></tr>
+    <tr><td class="k">商店 / 安全屋</td><td class="v">5 / 5</td><td class="v">10.5%</td><td>商店固定 2 个消耗品位，首访补给</td></tr>
+    <tr><td class="k">碎片看守</td><td class="v">3</td><td class="v">3.2%</td><td>6 / 12 / 15 层，三条不同 lane</td></tr>
+    <tr><td class="k">宝库 / 精英 / 终端 / 首领</td><td class="v">3 / 1 / 1 / 1</td><td class="v">6.3%</td><td>沿用旧规则</td></tr>
+  </table>
+  <div class="note">追踪上限 42 = 17 层 × 2.5 轮，和旧版「每层 2.5 轮」的压力曲线一致；敌人数量、基础属性、d100 判定全部未改。</div>
+
+  <h2>02 · 这一版加的系统</h2>
+  <div class="cards">
+    <div class="card"><h4>废弃服务器<span>SERVER</span></h4><p>六属性各一台（VIT/C/H/E/SPD/L）+ 医疗 / 冷却 / 日志。每台只加一项、只给使用者，每人每幕上限 2 次，第 3 台烧接口返 60 币。</p></div>
+    <div class="card"><h4>陷阱与遗骸<span>TRAP / CORPSE</span></h4><p>陷阱按 SPD/L 做 d100 检定，失败掉血但不致死；遗骸给币、道具、8% 装备，并留一句遗言。</p></div>
+    <div class="card"><h4>消耗品<span>CONSUMABLE</span></h4><p>止血针 / 聚焦剂 / 净化剂 / 护盾发生器 / 肾上腺素。探索耗 1 AP，战斗占一次行动，和装备分开堆叠。</p></div>
+    <div class="card"><h4>三片密钥<span>KEY SHARDS</span></h4><p>终局目标拆给 6/12/15 层三名看守，必须集齐才开门。三片分属三条 lane，强制横向穿图。</p></div>
+    <div class="card"><h4>敌方驱散<span>DISPEL</span></h4><p>新增 <code>dispel</code>：清空目标全部增益与护盾。只挂在天秤「罪证标记」上，全角色唯一。</p></div>
+    <div class="card"><h4>战术标签<span>TAGS</span></h4><p>16 名角色全部标注爆发 / 持续 / 增益 / 减益 / 护盾 / 治疗 / 召唤 / 控制，选角页直接显示。</p></div>
+  </div>
+
+  <h2>03 · 验证结果</h2>
+  <table>
+    <tr><th>项目</th><th>方式</th><th>结果</th><th>证据</th></tr>
+    <tr><td class="k">构建</td><td class="v">dotnet build</td><td><span class="pill ok">通过</span></td><td>0 警告 0 错误</td></tr>
+    <tr><td class="k">地图配额</td><td class="v">systems-check</td><td><span class="pill ok">通过</span></td><td>95 节点、9 服务器、3 碎片、事件 9.5%、空地 12.6%</td></tr>
+    <tr><td class="k">服务器规则</td><td class="v">systems-check</td><td><span class="pill ok">通过</span></td><td>单人单项 +2；第 3 台返 60 币；写入计数 2</td></tr>
+    <tr><td class="k">陷阱</td><td class="v">systems-check</td><td><span class="pill ok">通过</span></td><td>40 → 35 HP，触发一次，不为 0</td></tr>
+    <tr><td class="k">遗骸</td><td class="v">systems-check</td><td><span class="pill ok">通过</span></td><td>+21 币，二次搜刮被拒</td></tr>
+    <tr><td class="k">消耗品</td><td class="v">systems-check</td><td><span class="pill ok">通过</span></td><td>商店 2 个消耗品位；购买、使用、扣数量；战斗专用道具在探索中被拒</td></tr>
+    <tr><td class="k">碎片门槛</td><td class="v">systems-check</td><td><span class="pill ok">通过</span></td><td>0/3 时首领不可进入</td></tr>
+    <tr><td class="k">自动全流程</td><td class="v">agi-bot 1–4 人</td><td><span class="pill ok">通过</span></td><td>全部 Victory，14–16 轮，剩余追踪 27–29/42</td></tr>
+    <tr id="e2e-row"><td class="k">浏览器三幕</td><td class="v">browser-e2e.mjs</td><td><span class="pill ok">通过</span></td><td id="e2e-note">4 人真实 UI：三片碎片 → 两次幕间 → 结局；497 秒，全员 Lv.9–10，控制台 0 报错</td></tr>
+  </table>
+
+  <h2>04 · 实机画面</h2>
+  <figure>
+    <img src="out/01-act1-map.png" alt="第一幕地图" />
+    <figcaption><b>第一幕 · 17 层长图</b><span>追踪 42/42 · 服务器与陷阱已在图上标出</span></figcaption>
+  </figure>
+  <figure>
+    <img src="out/09-victory.png" alt="结局" />
+    <figcaption><b>协议终止</b><span>三幕结束的结算面板</span></figcaption>
+  </figure>
+
+  <h2>05 · 还没做的</h2>
+  <div class="note risk"><b>真人时长未测。</b>自动流程单幕 5–6 分钟；按人类节奏估算三幕 6–7.5 小时，需要你自己走一遍才知道真实数字。</div>
+  <div class="note risk"><b>音效仍只验证到「不报错」。</b>headless 没有音频设备。</div>
+  <div class="note"><b>记忆币略偏多。</b>自动流程结束剩 2900–3200，因为机器人只升级两次；真人会花在装备和补给上。若你觉得钱太多，我可以再压小战斗的掉落。</div>
+
+  <footer>零号协议 2046 · 0.9.0 · 规则层 AGI2046.Rules（纯 C#，可直接给 Unity 引用）</footer>
+</div>
+</body>
+</html>

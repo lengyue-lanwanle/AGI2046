@@ -1,0 +1,20 @@
+# 只让镜像里出现「跑起来需要的东西」：源码靠 COPY src/ 和 web/
+.git
+.github
+.vs
+.vscode
+.workbuddy
+.routercode
+**/bin
+**/obj
+.pubtest
+data
+node_modules
+tools/e2e/out
+tools/art/raw
+tools/video/raw
+tools/video/out
+docs/ui-shots
+*.md
+!README.md
+*.log

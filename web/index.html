@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#05070d" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <title>零号协议 2046 · AGI PROTOCOL</title>
+  <!-- 字体改为自托管子集（web/fonts），不再依赖 fonts.googleapis.com：
+       原来光是那份 CSS 就有 330KB，断网/内网还会掉字。 -->
+  <!-- 字体不 preload：489KB 抢首屏带宽不划算，靠 font-display:swap 先出系统字 -->
+  <link rel="preconnect" href="fonts" />
+  <!-- 首屏最大的一张图：让它在解析 HTML 时就开始下 -->
+  <link rel="preload" as="image" href="assets/keyart/title.webp" fetchpriority="high" />
+  <link rel="stylesheet" href="css/style.css?v=258" />
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="scanlines"></div>
+  <div id="app">
+    <section id="title-screen" class="screen active">
+      <div class="title-keyart"><img src="assets/keyart/title.webp" alt="" fetchpriority="high" /></div>
+      <div class="title-rail" id="title-portraits"></div>
+      <div class="title-inner">
+        <div class="kicker"><span class="pulse-dot"></span> NEON HARBOR / MIRROR SEA / ORBITAL ZERO</div>
+        <h1 class="glitch-title" data-text="零号协议">零号协议</h1>
+        <div class="title-year">2 0 4 6</div>
+        <p class="title-sub">三幕都市潜行 · 一场关于记忆、拍卖与失控智能体的合作战术冒险</p>
+        <div class="title-actions">
+          <button id="btn-start" class="btn btn-primary title-cta"><span>接入协议</span><small>CO-OP TACTICAL RPG</small></button>
+          <button id="btn-resume" class="btn btn-ghost title-cta hidden"><span>继续行动</span><small id="resume-sub">恢复上次存档</small></button>
+        </div>
+        <div class="title-secondary">
+          <button id="btn-tutorial" class="btn btn-ghost tutorial-entry" aria-label="第一次玩？从这里开始" title="第一次玩？从这里开始"><span>新手教学</span><small id="tutorial-badge">10 分钟</small></button>
+          <button id="btn-challenge" class="btn btn-ghost challenge-entry"><span>挑战模式</span><small id="challenge-badge">规则变异</small></button>
+          <button id="btn-room-create" class="btn btn-ghost">创建联机房间</button>
+          <button id="btn-room-join" class="btn btn-ghost">加入房间</button>
+          <button id="btn-title-cg" class="btn-link">开场动画</button>
+          <button id="btn-story-archive" class="btn-link">剧情档案</button>
+          <button id="btn-title-archive" class="btn-link">情报档案</button>
+          <button id="btn-title-glossary" class="btn-link">术语表</button>
+          <button id="btn-title-help" class="btn-link">操作说明</button>
+        </div>
+        <div class="title-specs">
+          <div><b>1–4</b><span>执行体</span></div>
+          <div><b>60–75</b><span>分钟</span></div>
+          <div><b>d100</b><span>判定</span></div>
+          <div><b>7×5</b><span>战术网格</span></div>
+        </div>
+        <div id="title-runs" class="title-runs hidden">
+          <div class="tr-label">最近行动 · RECENT RUNS</div>
+          <ul id="title-runs-list"></ul>
+        </div>
+      </div>
+      <div class="title-footer">
+        <span>AGI2046 // LOCAL CO-OP PLAYTEST BUILD 0.25.0 · THREE ACTS · TUTORIAL</span>
+        <span id="server-status">LINK: <em>CHECKING…</em></span>
+      </div>
+    </section>
+
+    <section id="select-screen" class="screen">
+      <header class="select-head">
+        <button id="btn-select-back" class="btn btn-ghost btn-sm">← 返回</button>
+        <div class="select-title">
+          <span class="eyebrow">EXECUTOR ROSTER</span>
+          <h2>选择你的协议执行体</h2>
+        </div>
+        <div class="select-actions">
+          <div class="select-count"><b id="select-count">0</b><span>/ 4</span></div>
+          <button aria-label="开始新对局" id="btn-create" class="btn btn-primary" disabled>进入霓虹港</button>
+        </div>
+      </header>
+      <div class="select-body">
+        <div id="character-grid" class="character-grid"></div>
+        <aside class="select-side">
+          <div class="side-label">当前队伍</div>
+          <div id="selected-roster" class="selected-roster"></div>
+          <div class="select-tip">
+            <b>提示</b>
+            <p>每名角色拥有 1 个被动、2 个主动技能和 1 个终极技能。队伍最多 4 人。可以单人开局，但联合行动会更容易。</p>
+          </div>
+          <div class="role-legend">
+            <span><i class="dot guard"></i>守护</span>
+            <span><i class="dot fighter"></i>斗士</span>
+            <span><i class="dot ranger"></i>游侠</span>
+            <span><i class="dot support"></i>支援</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="room-screen" class="screen">
+      <header class="select-head">
+        <button id="btn-room-back" class="btn btn-ghost btn-sm">← 返回标题</button>
+        <div class="select-title">
+          <span class="eyebrow">CO-OP LOBBY</span>
+          <h2>联机房间</h2>
+        </div>
+        <div class="select-actions">
+          <div class="room-code-box"><span>房间码</span><b id="room-code">----</b></div>
+          <button aria-label="开始联机对局" id="btn-room-start" class="btn btn-primary" disabled>开始对局</button>
+        </div>
+      </header>
+      <div class="room-body">
+        <div class="room-panel">
+          <div class="side-label">座位</div>
+          <div id="room-seats" class="room-seats"></div>
+        </div>
+        <aside class="select-side">
+          <div class="side-label">怎么玩</div>
+          <div class="room-tip">
+            <p>把房间码和下面的地址一起发给队友，他们打开后点「加入房间」输入房间码即可。</p>
+            <p class="room-addr"><b id="room-share-url">—</b></p>
+            <p><button aria-label="复制联机地址和房间码" class="btn btn-sm btn-ghost" id="btn-copy-room">复制地址 + 房间码</button></p>
+            <p>进房后点「选角色」，从 16 名执行体里挑一个；被队友先选走的不给选。所有人都选好后，房主才能开局。</p>
+            <p>轮到你时，只有你能操作自己的角色；其他人只读等待。</p>
+            <p>房主可以在任何时候「跳过」卡住的回合。</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="game-screen" class="screen">
+      <header id="game-topbar">
+        <div class="tb-brand">
+          <div class="brand-mini"><span class="brand-mark">◈</span><span>零号协议</span><em>2046</em></div>
+          <div class="tb-divider"></div>
+          <div class="act-name" id="act-name">第一幕 · 霓虹港</div>
+          <div class="round-chip">ROUND <b id="round-value">1</b></div>
+        </div>
+        <div class="clock" id="purge-clock" title="电子追踪：每 4 个玩家回合 −1，归零则任务失败">
+          <div class="clock-top">
+            <span class="clock-label">电子追踪</span>
+            <b id="purge-value">10/10</b>
+          </div>
+          <div class="clock-meter" id="purge-meter"></div>
+        </div>
+        <div class="resource-bar">
+          <div class="resource memory" title="记忆币：黑市、强化、复活"><i class="res-icon res-icon-svg " style="-webkit-mask:url(assets/icons/res-memory.svg) center/contain no-repeat;mask:url(assets/icons/res-memory.svg) center/contain no-repeat"></i><span class="res-label">记忆</span><b id="memory-value">120</b></div>
+          <div class="resource alloy" title="合金：强化装备用"><i class="res-icon res-icon-svg " style="-webkit-mask:url(assets/icons/res-alloy.svg) center/contain no-repeat;mask:url(assets/icons/res-alloy.svg) center/contain no-repeat"></i><span class="res-label">合金</span><b id="alloy-value">4</b></div>
+          <div class="resource lives" title="队伍生命：全队倒下时消耗一格"><i class="res-icon res-icon-svg " style="-webkit-mask:url(assets/icons/res-life.svg) center/contain no-repeat;mask:url(assets/icons/res-life.svg) center/contain no-repeat"></i><span class="res-label">生命</span><b id="lives-value">3</b></div>
+          <span class="save-pill" id="save-pill">已保存</span>
+          <button class="icon-btn" id="btn-bag" title="随身道具（I）" aria-label="随身道具"><span class="ui-icon i-bag"></span></button>
+          <button class="icon-btn" id="btn-sound" title="音效开关" aria-label="音效开关"><span class="ui-icon i-sound"></span></button>
+          <button class="icon-btn" id="btn-help" title="操作说明（H）" aria-label="操作说明"><span class="ui-icon i-help"></span></button>
+          <button class="icon-btn" id="btn-restart" title="放弃当前行动" aria-label="放弃当前行动"><span class="ui-icon i-restart"></span></button>
+        </div>
+      </header>
+
+      <!-- 教学条：只在教学局出现，替代目标条。每一步只给一个「该做什么」。 -->
+      <div id="tutorial-bar" class="tutorial-bar hidden" role="region" aria-label="新手教学">
+        <div class="tut-rail" id="tutorial-rail"></div>
+        <div class="tut-main">
+          <div class="tut-kicker">
+            <span id="tutorial-count">教学 1/9</span>
+            <span class="tut-step" id="tutorial-step">目标</span>
+          </div>
+          <b id="tutorial-title">准备开始</b>
+          <p id="tutorial-detail">读完目标后点「开始教学」。</p>
+          <details class="tut-why">
+            <summary>为什么这样做</summary>
+            <p id="tutorial-why"></p>
+            <p class="tut-hint" id="tutorial-hint"></p>
+          </details>
+        </div>
+        <div class="tut-actions">
+          <button class="btn btn-sm btn-primary" id="btn-tutorial-next" data-act="tutorial-next">开始教学</button>
+          <button class="btn btn-sm btn-ghost" id="btn-tutorial-skip" data-act="tutorial-skip">跳过教学</button>
+        </div>
+      </div>
+
+      <!-- 目标条：任何时刻都看得到「现在最重要的事」，点开看完整面板。 -->
+      <div id="goal-strip" class="goal-strip hidden" aria-live="polite">
+        <button class="gs-main" data-act="goal-open" aria-label="查看完整目标面板">
+          <span class="gs-kicker">MAIN GOAL</span>
+          <b id="goal-main">—</b>
+        </button>
+        <div class="gs-side">
+          <span class="gs-current" id="goal-current">—</span>
+          <span class="gs-risk" id="goal-risk"></span>
+        </div>
+        <button class="gs-more" data-act="goal-open" aria-label="目标详情">详情</button>
+      </div>
+
+      <main class="game-layout">
+        <aside class="party-panel">
+          <div class="panel-heading"><span>EXECUTORS</span><em>队伍状态</em></div>
+          <div id="party-list" class="party-list"></div>
+          <div class="party-actions">
+            <button aria-label="打开装备与背包" class="btn btn-ghost btn-sm" id="btn-inventory">装备 / 背包</button>
+            <button aria-label="协助队友（支援动作）" class="btn btn-ghost btn-sm" id="btn-assist">协助队友</button>
+          </div>
+        </aside>
+
+        <section class="stage">
+          <div id="map-wrap" class="map-wrap">
+            <div class="map-grid-bg"></div>
+            <div class="map-header">
+              <div>
+                <span class="eyebrow" id="map-eyebrow">NEON HARBOR // ACT I</span>
+                <h2>行动节点图</h2>
+              </div>
+              <div class="map-tools">
+                <div class="map-zoom">
+                  <button class="icon-btn" data-act="map-zoom" data-delta="-1" title="缩小地图" aria-label="缩小地图">-</button>
+                  <button class="icon-btn" data-act="map-zoom" data-delta="1" title="放大地图" aria-label="放大地图">+</button>
+                  <button class="icon-btn" data-act="map-center" title="定位到当前角色" aria-label="定位到当前角色">◎</button>
+                </div>
+                <details class="legend-pop">
+                  <summary>图例</summary>
+                  <div class="map-legend">
+                    <span><i class="legend-node event"></i>事件</span>
+                    <span><i class="legend-node combat"></i>战斗</span>
+                    <span><i class="legend-node skirmish"></i>小战斗</span>
+                    <span><i class="legend-node elite"></i>精英</span>
+                    <span><i class="legend-node keyelite"></i>碎片看守</span>
+                    <span><i class="legend-node trap"></i>陷阱</span>
+                    <span><i class="legend-node corpse"></i>遗骸</span>
+                    <span><i class="legend-node echo"></i>残响</span>
+                    <span><i class="legend-node server"></i>服务器</span>
+                    <span><i class="legend-node awakening"></i>找回自我</span>
+                    <span><i class="legend-node shop"></i>黑市</span>
+                    <span><i class="legend-node safehouse"></i>安全屋</span>
+                    <span><i class="legend-node blank"></i>空地</span>
+                    <span><i class="legend-node key"></i>密钥</span>
+                    <span><i class="legend-node boss"></i>首领</span>
+                  </div>
+                </details>
+              </div>
+            </div>
+            <div id="map-viewport" class="map-viewport">
+              <canvas id="map3d"></canvas>
+              <div id="map-canvas" class="map-canvas">
+                <svg id="map-edges" viewBox="0 0 2820 560" preserveAspectRatio="none"></svg>
+                <div id="map-nodes" class="map-nodes"></div>
+              </div>
+            </div>
+            <div class="map-footer">
+              <div id="map-message" class="map-message">点击相邻节点移动。点击当前节点互动。</div>
+              <div class="map-hint"><kbd>1–4</kbd> 切换视野 <span>·</span> <kbd>ESC</kbd> 关闭窗口</div>
+            </div>
+          </div>
+
+          <div id="combat-wrap" class="combat-wrap hidden">
+            <div class="combat-head">
+              <div>
+                <span class="eyebrow danger">TACTICAL ENCOUNTER</span>
+                <h2 id="combat-title">战斗</h2>
+              </div>
+              <div class="combat-head-right">
+                <div id="spectate-badge" class="spectate-badge hidden">观战中</div>
+                <div class="combat-round">ROUND <b id="combat-round">1</b></div>
+                <button id="btn-focus" class="btn btn-ghost btn-sm" data-act="focus-combat" aria-label="隐藏侧栏，让战场占满宽度" title="隐藏侧栏，让战场占满宽度"><span class="ui-icon i-expand"></span><span>展开侧栏</span></button>
+              </div>
+            </div>
+            <div class="turn-strip" id="turn-strip"></div>
+            <!-- 0.24：首领机制条。一直可见，机制不靠记忆。 -->
+            <div id="boss-bar" class="boss-bar hidden" role="region" aria-label="首领机制">
+              <div class="bb-main">
+                <span class="bb-kicker" id="boss-kicker">BOSS MECHANIC</span>
+                <b id="boss-mech-title"></b>
+                <p id="boss-mech-hint"></p>
+              </div>
+              <div class="bb-side">
+                <span id="boss-mech-state" class="bb-state"></span>
+                <div id="boss-trades" class="bb-trades"></div>
+              </div>
+            </div>
+            <div class="combat-body">
+              <div class="hex-stage">
+                <canvas id="battle3d" class="battle3d"></canvas>
+                <div id="hex-grid" class="hex-grid"></div>
+                <div id="combat-hint" class="combat-hint"></div>
+              </div>
+              <aside class="combat-side">
+                <div id="active-unit-card" class="active-unit-card"></div>
+                <div id="skill-list" class="skill-list"></div>
+                <div class="combat-actions">
+                  <button class="btn btn-sm btn-ghost" id="btn-basic" aria-label="用武器攻击射程内的敌人" title="用武器攻击射程内的敌人"><span class="ui-icon i-attack"></span><span>普通攻击</span></button>
+                  <button class="btn btn-sm btn-ghost" id="btn-item" aria-label="使用消耗品" title="使用消耗品"><span class="ui-icon i-item"></span><span>道具</span></button>
+                  <button class="btn btn-sm btn-ghost" id="btn-defend" aria-label="本回合减伤，获得护盾" title="本回合减伤，获得护盾"><span class="ui-icon i-defend"></span><span>防御</span></button>
+                  <button class="btn btn-sm btn-ghost btn-danger-ghost" id="btn-retreat" aria-label="撤退：回到进入战斗前的节点，参战成员 -10% 生命" title="撤退：回到进入战斗前的节点，参战成员 -10% 生命"><span class="ui-icon i-retreat"></span><span>撤离</span></button>
+                  <button class="btn btn-sm btn-primary" id="btn-end-combat" aria-label="结束当前单位回合" title="结束当前单位回合"><span class="ui-icon i-end"></span><span>结束回合</span></button>
+                </div>
+                <div class="combat-log-box">
+                  <div class="mini-label">战斗记录</div>
+                  <div id="combat-log" class="combat-log"></div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        <aside class="intel-panel">
+          <div class="panel-heading"><span>INTEL</span><em>行动情报</em></div>
+          <div class="objective-card">
+            <div class="mini-label">当前目标</div>
+            <p id="objective-text">找到王冠密钥，关闭零号协议。</p>
+            <p id="objective-now" class="objective-now"></p>
+            <div class="objective-tags">
+              <span id="key-status" class="tag">密钥：未获取</span>
+              <span id="signal-status" class="tag">信号：稳定</span>
+              <button class="tag tag-btn" data-act="goal-open">完整目标</button>
+              <button class="tag tag-btn" id="btn-archive" data-act="archive-open">情报档案</button>
+            </div>
+          </div>
+          <div id="consequence-box" class="consequence-box hidden">
+            <div class="mini-label">事件后果</div>
+            <div id="consequence-list" class="consequence-list"></div>
+          </div>
+          <div id="active-card" class="active-card"></div>
+          <div id="room-actions" class="room-actions hidden"></div>
+          <div id="quest-box" class="quest-box hidden">
+            <div class="mini-label">支线</div>
+            <div id="quest-list" class="quest-list"></div>
+          </div>
+          <div class="log-box">
+            <div class="log-head"><span>行动记录</span><em id="log-count">0</em></div>
+            <div id="log-list" class="log-list"></div>
+          </div>
+        </aside>
+      </main>
+    </section>
+
+  <div id="modal-root"></div>
+  <div id="dice-layer" class="dice-layer"></div>
+  <div id="toast-layer" class="toast-layer"></div>
+  <div id="tooltip" class="tooltip hidden"></div>
+  <div id="cine-layer" class="cine-layer"></div>
+  <div id="fx-layer" class="fx-layer"></div>
+  <div id="vn-layer" class="vn-layer" aria-hidden="true"></div>
+  <div id="cg-layer" class="cg-layer"></div>
+  <script src="js/audio.js?v=258"></script>
+  <script src="js/cinematics.js?v=258"></script>
+  <script src="js/fx.js?v=258"></script>
+  <script src="js/story.js?v=258"></script>
+  <script src="js/vn.js?v=258"></script>
+  <script src="js/cg.js?v=258"></script>
+  <script src="js/glossary.js?v=258"></script>
+  <script src="js/archive.js?v=258"></script>
+  <script src="js/app.js?v=258"></script>
+</body>
+</html>

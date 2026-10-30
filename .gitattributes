@@ -1,0 +1,28 @@
+# 统一换行符：Windows 上 core.autocrlf=true 时，脚本被 checkout 成 CRLF 再拷到 Linux 会
+# 报 “bad interpreter: ^M”。这几个文件必须是 LF。
+*.sh            text eol=lf
+Dockerfile      text eol=lf
+.dockerignore   text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.toml          text eol=lf
+Caddyfile       text eol=lf
+*.mjs           text eol=lf
+*.js            text eol=lf
+*.cs            text eol=lf
+*.css           text eol=lf
+*.html          text eol=lf
+*.md            text eol=lf
+*.json          text eol=lf
+
+# Windows 批处理反过来，必须是 CRLF
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+# 二进制资源：别让 git 去「智能」处理
+*.png           binary
+*.jpg           binary
+*.webp          binary
+*.mp3           binary
+*.ogg           binary
+*.woff2         binary

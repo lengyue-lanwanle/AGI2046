@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>3D combat prototype</title>
+<style>
+  html,body{margin:0;height:100%;background:#05070b;overflow:hidden}
+  #combat-wrap{position:relative;width:100vw;height:100vh}
+  #battle3d{position:absolute;inset:0;width:100%;height:100%;display:block}
+</style></head>
+<body>
+  <div id="combat-wrap"><canvas id="battle3d"></canvas></div>
+  <script src="vendor/three.min.js"></script>
+  <script src="js/battle3d.js"></script>
+  <script>
+    const combat = {
+      width: 7, height: 5, activeUnitId: 'u1',
+      reachable: [{col:1,row:1},{col:2,row:1},{col:1,row:2},{col:2,row:2},{col:3,row:2},{col:2,row:3}],
+      terrain: [{col:0,row:0,type:'obstacle'},{col:6,row:4,type:'obstacle'},{col:5,row:1,type:'cover'}],
+      units: [
+        {id:'u1', side:'player', name:'BaiE', col:2, row:2, hp:40, maxHp:40, portrait:'assets/portraits/gpt1.webp'},
+        {id:'u2', side:'player', name:'Xian', col:1, row:1, hp:50, maxHp:50, portrait:'assets/portraits/claude.webp'},
+        {id:'e1', side:'enemy', name:'Swarm', col:5, row:2, hp:22, maxHp:22},
+        {id:'e2', side:'enemy', name:'Sniper', col:6, row:3, hp:28, maxHp:28}
+      ]
+    };
+    fetch('battle3d-real.json', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(real => {
+        window.__combat = real;
+        Battle3D.render(real);
+        // 演示：每 1.4s 模拟一次施法（第一个玩家 → 第一个敌人），截图时总能抓到地环
+        setInterval(() => {
+          const caster = real.units.find(u => u.side === 'player');
+          const target = real.units.find(u => u.side === 'enemy');
+          if (!caster || !target) return;
+          window.dispatchEvent(new CustomEvent('battle3d-cast', {
+            detail: {
+              casterId: caster.id, casterCol: caster.col, casterRow: caster.row,
+              targetCol: target.col, targetRow: target.row, skillId: 'demo-aoe', area: 1
+            }
+          }));
+        }, 1400);
+      })
+      .catch(() => Battle3D.render(combat));
+
+  </script>
+</body></html>

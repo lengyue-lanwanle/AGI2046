@@ -1,0 +1,22 @@
+# 站点地址取自环境变量：有域名就自动申 Let's Encrypt 证书，没有就退回 :80 明文。
+# 注意：这个文件**必须**带 DOMAIN 才能解析——变量为空时 Caddy 会把 encode 当成全局选项报错。
+# docker-compose.yml 里已经写了默认值 ${DOMAIN:-:80}，手动跑 caddy 时记得 export DOMAIN=:80。
+{$DOMAIN} {
+	encode zstd gzip
+
+	# 客户端 IP 必须透传：服务端按 X-Forwarded-For 做限速（建房 10 次/小时等）。
+	# 不透传的话所有玩家会被算成同一个 IP，一个人建房就把全站额度用光。
+	reverse_proxy app:5178 {
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+
+	# 游戏是 HTTP 轮询（没有 WebSocket），不需要额外的升级头配置
+	log {
+		output file /data/access.log {
+			roll_size 10mb
+			roll_keep 3
+		}
+		format console
+	}
+}
